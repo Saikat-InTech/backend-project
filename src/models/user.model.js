@@ -69,20 +69,20 @@ userSchema.methods.genrateAccestoken=function(){
         username:this.username,
         fullName:this.fullName
     },
-    prooces.env.ACCES_TOKEN_SECRET,
+    process.env.ACCES_TOKEN_SECRET,
     {
         expireIn:ACCES_TOKEN_EXPIRY
     }
 )
 }
-userSchema.methods.genrateRccestoken=function(){
+userSchema.methods.genrateRefrestoken=function(){
      return  JWT.sign({
         _id:this._id,
         email:this.email,
         username:this.username,
         fullName:this.fullName
     },
-    procces.env.REFRESH_TOKEN_SECRET,
+    process.env.REFRESH_TOKEN_SECRET,
     {
         expireIn:REFRESH_TOKEN_EXPIRY
     }
