@@ -8,6 +8,8 @@ const storage =multer.diskStorage({
         cb(null,file.originalname)
     }
 })
-export const upload =multer({
-    storage,
+ const upload =multer({
+    storage
 })
+
+export default upload
