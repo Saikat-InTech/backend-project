@@ -10,6 +10,8 @@ app.use(cors({
 }));
 app.use(express.json({ limit: "12kb" }));
 app.use(express.urlencoded({
+
+    
     extended: true,
     limit: "12kb",
 }));
@@ -34,5 +36,5 @@ import  router  from "./routes/user.routes.js"
 // routes declaration
 app.use("/api/v1/users", router);
 
-
+console.log(app);
 export default app;
