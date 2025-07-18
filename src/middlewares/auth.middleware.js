@@ -2,15 +2,20 @@ import asyncHandler from "../utils/asyncHandler.js";
 import JWT from "jsonwebtoken";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
-const verfiyJWT = asyncHandler(async (req, _ , next) => {
+const verfiyJWT = asyncHandler(async (req, _, next) => {
   try {
     const token =
-      req.cookies?.accestoken ||
-      req.header("Authorization")?.replace("Bearer ", "");
+  req.cookies?.accestoken || req.header("Authorization")?.replace("Bearer ", "");
+
+  
+    // console.log(token);
     if (!token) {
       throw new ApiError(401, "unauthorized error");
     }
-    const decodedtoken = JWT.verify(token, process.env.ACCES_TOKEN_SECRET);
+    // console.log(token)
+    const decodedtoken = JWT.verify(token,process.env.ACCESS_TOKEN_SECRET);
+        console.log(decodedtoken)
+
     const user = await User.findById(decodedtoken?._id).select(
       "-password -refreshtoken"
     );

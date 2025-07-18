@@ -36,5 +36,5 @@ import  router  from "./routes/user.routes.js"
 // routes declaration
 app.use("/api/v1/users", router);
 
-console.log(app);
+// console.log(app);
 export default app;

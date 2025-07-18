@@ -59,21 +59,22 @@ const registerUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, createdUser, "User registered successfully"));
 });
 
-const loginUser = asyncHandler(async (req, res) => {
+const loginUser= asyncHandler(async (req, res) => {
   //req body
   //username and password is valid or not
   // if password is valid then check the password is correct
   //access and refresh token send user
   //// send cookie
 
-  const { userName, email, password } = req.body;
-
-  if (!userName || !email) {
+  const {username,email,password} = req.body;
+// console.log(username, email, password);
+  if (!username && !email) {
     throw new ApiError(400, "User or email is required");
   }
   const user = await User.findOne({
-    $or: [{ userName }, { email }],
+    $or: [{ username }, { email }],
   });
+  console.log(user._id);
   if (!user) {
     throw new ApiError(404, "User Does Not Exist");
   }
@@ -82,20 +83,30 @@ const loginUser = asyncHandler(async (req, res) => {
   if (!ispasswordvalid) {
     throw new ApiError(401, "invalid user credentials");
   }
-  const G_Acces_And_Refresh_Token = async (userid) => {
-    try {
-      const user = await User.findById(userid);
-      const accesstoken = user.genrateAccestoken();
-      const refreshtoken = user.genrateRefrestoken();
-      user.refreshToken = refreshtoken;
-      await user.save({ validateBeforeSave: false });
-      return { accesstoken, refreshtoken };
-    } catch (err) {
-      throw new ApiError(500, "A and R TOken");
-    }
-  };
+  const G_Access_And_Refresh_Token = async (userId) => {
+  try {
+    const user = await User.findById(userId);
 
-  const { accesstoken, refreshtoken } = await G_Acces_And_Refresh_Token(
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+
+    const accessToken = user.generateAccessToken();
+    console.log(accessToken);
+    const refreshToken = user.generateRefreshToken();
+    console.log(refreshToken );
+
+    user.refreshToken = refreshToken;
+    await user.save({ validateBeforeSave: false });
+
+    return { accessToken, refreshToken };
+  } catch (err) {
+    throw new ApiError(500, "Error generating access and refresh tokens", err);
+  }
+};
+
+
+  const { accessToken, refreshToken  } = await G_Access_And_Refresh_Token(
     user._id
   );
 
@@ -108,14 +119,14 @@ const loginUser = asyncHandler(async (req, res) => {
   };
   return res
     .status(200)
-    .cookie("accesToken", accesstoken, options)
-    .cookie("refreshtoken", refreshtoken, options)
+    .cookie("accestoken", accessToken, options)
+    .cookie("refreshtoken", refreshToken , options)
     .json(
-      new APiResponse(
+      new ApiResponse(
         200,
         {
           user:loggedInuser,
-          refreshtoken 
+     refreshToken  ,accessToken
 
         },
         "User logged in succes fully"
@@ -142,14 +153,18 @@ await User.findByIdAndUpdate(
     secure:true
   }
 
-return res.status(200).clearcookie("accesToken",options).clearcookie("refreshToken",options).json(
-  200,
-  {},
-  "user log out"
-)
+return res
+  .status(200)
+  .clearCookie("accesToken", options)
+  .clearCookie("refreshToken", options)
+  .json({
+    success: true,
+    message: "User logged out successfully"
+  });
+
 })
 
 
 
 
-export { registerUser, loginUser };
+export { registerUser, loginUser,logoutUser };

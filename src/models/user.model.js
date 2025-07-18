@@ -62,32 +62,32 @@ next();
 userSchema.methods.isPasswordCorrect= async function(password){
   return  await  bcrypt.compare(password,this.password);//its give true and false 
 }
-userSchema.methods.genrateAccestoken=function(){
-   return  JWT.sign({
-        _id:this._id,
-        email:this.email,
-        username:this.username,
-        fullName:this.fullName
-    },
-    process.env.ACCES_TOKEN_SECRET,
+userSchema.methods.generateAccessToken = function () {
+  return JWT.sign(
     {
-        expireIn:ACCES_TOKEN_EXPIRY
+      _id: this._id,
+      email: this.email,
+      username: this.username,
+      fullName: this.fullName,
+    },
+    process.env.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
     }
-)
-}
-userSchema.methods.genrateRefrestoken=function(){
-     return  JWT.sign({
-        _id:this._id,
-        email:this.email,
-        username:this.username,
-        fullName:this.fullName
+  );
+};
+
+userSchema.methods.generateRefreshToken = function () {
+  return JWT.sign(
+    {
+      _id: this._id,
     },
     process.env.REFRESH_TOKEN_SECRET,
     {
-        expireIn:REFRESH_TOKEN_EXPIRY
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
     }
-)
-}
+  );
+};
 
 
 export const User = mongoose.model("User", userSchema);
