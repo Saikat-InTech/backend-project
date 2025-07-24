@@ -91,7 +91,7 @@ const loginUser = asyncHandler(async (req, res) => {
   //// send cookie
 
   const { username, email, password } = req.body;
-  // console.log(username, email, password);
+  console.log(username, email, password);
   if (!username && !email) {
     throw new ApiError(400, "User or email is required");
   }
@@ -199,8 +199,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "Lax",
+   secure:true
   };
 
   return res
